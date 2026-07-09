@@ -99,6 +99,22 @@ Before committing: `generate` must be conflict-free, `src/` committed and in syn
 `tree-sitter test` green, examples zero-error, and add a `## [Unreleased]` note to
 [`CHANGELOG.md`](CHANGELOG.md). CI checks all of this.
 
+### Regenerate the README example image
+
+`assets/example.svg` is a **committed, generated artifact** — the README's example,
+coloured by this grammar's own `queries/highlights.scm` (GitHub can't highlight
+`.flux` natively, so it's an image). It is deliberately **not** checked by CI: the
+`tree-sitter query` capture order can vary, which would make a drift-check flaky.
+So if you touch `highlights.scm`, the theme, or `examples/readme-example.flux`,
+regenerate it and commit the result:
+
+```sh
+node scripts/render-example.mjs examples/readme-example.flux assets/example.svg "route-call.flux"
+```
+
+Prefer SVG (crisp, tiny, diff-able). For a raster (e.g. pasting into Slack, which
+won't inline SVG): `rsvg-convert -o example.png assets/example.svg`.
+
 ---
 
 ## Design & gotchas (read before editing the grammar)
@@ -133,4 +149,6 @@ Before committing: `generate` must be conflict-free, `src/` committed and in syn
 | `queries/*.scm` | `highlights`, `injections` (JSON into `@json`), `locals` |
 | `test/corpus/*.txt` | corpus tests (`tree-sitter test`) |
 | `examples/*.flux` | real files CI parses for zero errors |
+| `scripts/render-example.mjs` | regenerates the README's `assets/example.svg` |
+| `assets/example.svg` | generated README image (not CI-checked — refresh manually) |
 | `bindings/` | Node + Rust bindings (standard boilerplate) |

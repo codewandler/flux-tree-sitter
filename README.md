@@ -20,14 +20,10 @@ ships the TextMate grammar and IntelliJ plugin.
 
 ## Example
 
-<!-- assets/example.svg is generated from examples/readme-example.flux by
-     scripts/render-example.mjs, highlighted by this grammar's own
-     queries/highlights.scm — because GitHub can't highlight .flux natively. -->
+<!-- assets/example.svg is a generated image (GitHub can't highlight .flux) — see AGENTS.md to regenerate. -->
 ![A flux flow, highlighted by this grammar](assets/example.svg)
 
-<sub>Highlighted by this grammar itself — [`examples/readme-example.flux`](examples/readme-example.flux)
-run through `queries/highlights.scm`. Regenerate with
-`node scripts/render-example.mjs examples/readme-example.flux assets/example.svg "route-call.flux"`.</sub>
+<sub>Highlighted by this grammar itself — [`examples/readme-example.flux`](examples/readme-example.flux) run through `queries/highlights.scm`.</sub>
 
 ## What it highlights
 
