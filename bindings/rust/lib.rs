@@ -4,10 +4,10 @@
 //! tree-sitter [`Parser`], and then use the parser to parse some code:
 //!
 //! ```
-//! let code = r#"
-//!     flow greet(name: String) -> String
-//!       $msg = fmt("hi {name}")
-//!       return $msg
+//! // NB: declarations must start at column 0 (the grammar is line-oriented).
+//! let code = r#"flow greet(name: String) -> String
+//!   $msg = fmt("hi {name}")
+//!   return $msg
 //! "#;
 //! let mut parser = tree_sitter::Parser::new();
 //! let language = flux_tree_sitter::LANGUAGE;
