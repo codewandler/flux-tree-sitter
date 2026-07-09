@@ -1,0 +1,23 @@
+node_modules/
+build/
+prebuilds/
+*.wasm
+*.obj
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Rust
+/target/
+Cargo.lock
+
+# Node
+package-lock.json
+yarn.lock
+
+# Python
+dist/
+*.egg-info/
+__pycache__/

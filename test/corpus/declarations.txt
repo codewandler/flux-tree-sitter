@@ -1,0 +1,163 @@
+==================
+flow with params and body
+==================
+
+flow greet(name: String) -> String
+  $msg = fmt("hi {name}")
+  return $msg
+
+---
+
+(source_file
+  (flow_declaration
+    (identifier)
+    (parameter_list
+      (parameter
+        (identifier)
+        (builtin_type)))
+    (return_type
+      (builtin_type))
+    (bind_statement
+      (variable)
+      (fmt
+        (string
+          (string_content)
+          (interpolation
+            (interp_symbol)))))
+    (return_statement
+      (variable))))
+
+==================
+module declarations with secret and attributes
+==================
+
+channel voice
+  kind babelforce
+  service_token secret "BABELFORCE_SERVICE_TOKEN"
+
+trigger after-hours
+  on "call.inbound.no_agents"
+  run route-inbound
+  agent triage
+
+---
+
+(source_file
+  (channel_declaration
+    (declaration_keyword)
+    (identifier)
+    (attribute
+      (attribute_key
+        (identifier))
+      (identifier))
+    (attribute
+      (attribute_key
+        (identifier))
+      (secret_reference
+        (string
+          (string_content)))))
+  (trigger_declaration
+    (declaration_keyword)
+    (identifier)
+    (attribute
+      (attribute_key
+        (identifier))
+      (string
+        (string_content)))
+    (attribute
+      (attribute_key
+        (identifier))
+      (identifier))
+    (attribute
+      (attribute_key)
+      (identifier))))
+
+==================
+composite op with metadata
+==================
+
+op provision-agent(email: String) -> Any
+  description "make an agent"
+  risk "medium"
+  effects [network]
+  $agent = acd.create_agent({email: $email, confirm: true})
+  return {id: $agent.id}
+
+---
+
+(source_file
+  (op_declaration
+    (identifier)
+    (parameter_list
+      (parameter
+        (identifier)
+        (builtin_type)))
+    (return_type
+      (builtin_type))
+    (attribute
+      (attribute_key
+        (identifier))
+      (string
+        (string_content)))
+    (attribute
+      (attribute_key
+        (identifier))
+      (string
+        (string_content)))
+    (attribute
+      (attribute_key
+        (identifier))
+      (array
+        (arguments
+          (identifier))))
+    (bind_statement
+      (variable)
+      (call
+        (operation
+          (identifier)
+          (identifier))
+        (arguments
+          (object
+            (pair
+              (identifier)
+              (variable))
+            (pair
+              (identifier)
+              (boolean))))))
+    (return_statement
+      (object
+        (pair
+          (identifier)
+          (variable
+            (property)))))))
+
+==================
+type record and union
+==================
+
+type Slot
+  destination: String
+  cabin: String?
+
+type Intent
+  | book_flight
+  | escalate_agent
+
+---
+
+(source_file
+  (type_declaration
+    (type_identifier)
+    (record_field
+      (identifier)
+      (builtin_type))
+    (record_field
+      (identifier)
+      (optional_type
+        (builtin_type))))
+  (type_declaration
+    (type_identifier)
+    (union_variant
+      (identifier))
+    (union_variant
+      (identifier))))

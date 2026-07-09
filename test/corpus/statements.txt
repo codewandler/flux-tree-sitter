@@ -1,0 +1,188 @@
+==================
+control flow: when / each / match / route
+==================
+
+flow f(items: List)
+  when $ok
+    do notify "up"
+  else
+    do notify "down"
+  each $x in $items -> $out
+    read($x)
+  match $kind
+    case "chat"
+      $answer = $plan.text
+    default
+      $answer = "?"
+
+---
+
+(source_file
+  (flow_declaration
+    (identifier)
+    (parameter_list
+      (parameter
+        (identifier)
+        (builtin_type)))
+    (when_clause
+      (variable))
+    (do_statement
+      (operation
+        (identifier))
+      (arguments
+        (string
+          (string_content))))
+    (else_clause)
+    (do_statement
+      (operation
+        (identifier))
+      (arguments
+        (string
+          (string_content))))
+    (each_clause
+      (variable)
+      (variable)
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (variable))))
+    (match_clause
+      (variable))
+    (case_clause
+      (string
+        (string_content)))
+    (bind_statement
+      (variable)
+      (variable
+        (property)))
+    (default_clause)
+    (bind_statement
+      (variable)
+      (string
+        (string_content)))))
+
+==================
+retry / parallel / ctx / assert
+==================
+
+flow g
+  retry 3 backoff exponential delay 500 -> $r
+    flaky()
+  parallel
+    branch $a
+      $a = read("a")
+  ctx $pack
+    purpose "why"
+    include $a, $r
+  assert $a, "missing a"
+  return $a
+
+---
+
+(source_file
+  (flow_declaration
+    (identifier)
+    (retry_clause
+      (number)
+      (identifier)
+      (number)
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (parallel_clause)
+    (branch_clause
+      (variable))
+    (bind_statement
+      (variable)
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (string
+            (string_content)))))
+    (ctx_clause
+      (variable))
+    (context_attribute
+      (string
+        (string_content)))
+    (context_attribute
+      (variable)
+      (variable))
+    (assert_statement
+      (variable)
+      (string
+        (string_content)))
+    (return_statement
+      (variable))))
+
+==================
+strings, interpolation and json escape
+==================
+
+flow h
+  $s = "hi {name}\n"
+  $t = """verbatim
+multi line"""
+  @json {"kind": "lit", "value": 1}
+  return $s
+
+---
+
+(source_file
+  (flow_declaration
+    (identifier)
+    (bind_statement
+      (variable)
+      (string
+        (string_content)
+        (interpolation
+          (interp_symbol))
+        (escape_sequence)))
+    (bind_statement
+      (variable)
+      (triple_string))
+    (json_escape
+      (json_content))
+    (return_statement
+      (variable))))
+
+==================
+effect annotation and field access
+==================
+
+flow k(url: String)
+  @effect(network)
+  $page = web_fetch($url)
+  $status = $page.body.status
+  return $status
+
+---
+
+(source_file
+  (flow_declaration
+    (identifier)
+    (parameter_list
+      (parameter
+        (identifier)
+        (builtin_type)))
+    (bind_statement
+      (effect_annotation
+        (identifier))
+      (variable)
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (variable))))
+    (bind_statement
+      (variable)
+      (variable
+        (property)
+        (property)))
+    (return_statement
+      (variable))))
