@@ -10,9 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - The README example is now a syntax-highlighted image (`assets/example.svg`)
-  generated from `examples/readme-example.flux` by `scripts/render-example.mjs`,
-  coloured by this grammar's own `queries/highlights.scm` — since GitHub cannot
-  highlight `.flux` natively.
+  generated from `examples/readme-example.flux` — since GitHub cannot highlight
+  `.flux` natively.
+
+### Changed
+
+- Doc-image generation moved to the flux CLI: `assets/example.svg` is regenerated
+  with `flux render examples/readme-example.flux -o assets/example.svg` (flux's
+  own CST-based One-Dark renderer). The `scripts/render-example.mjs` Node script
+  — which shelled out to the `tree-sitter` CLI and coloured by
+  `queries/highlights.scm` — is retired and removed.
 
 ## [0.1.0] - 2026-07-09
 
