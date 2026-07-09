@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- The README example is now a syntax-highlighted image (`assets/example.svg`)
+  generated from `examples/readme-example.flux` by `scripts/render-example.mjs`,
+  coloured by this grammar's own `queries/highlights.scm` — since GitHub cannot
+  highlight `.flux` natively.
+
 ## [0.1.0] - 2026-07-09
 
 Initial release.
