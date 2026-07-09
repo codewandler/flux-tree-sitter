@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  grammar:
+    name: generate · test · parse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install tree-sitter CLI
+        run: npm install -g tree-sitter-cli@^0.24
+
+      - name: Generated src/ is in sync with grammar.js
+        run: |
+          tree-sitter generate
+          if ! git diff --quiet -- src/; then
+            echo "::error::src/ is out of date — run 'tree-sitter generate' and commit the result"
+            git --no-pager diff --stat -- src/
+            exit 1
+          fi
+
+      - name: Corpus tests
+        run: tree-sitter test
+
+      - name: Examples parse with zero errors
+        run: |
+          status=0
+          for f in examples/*.flux; do
+            if tree-sitter parse "$f" | grep -qE 'ERROR|MISSING'; then
+              echo "::error file=$f::parse produced ERROR/MISSING nodes"
+              status=1
+            else
+              echo "ok: $f"
+            fi
+          done
+          exit $status
+
+      - name: Highlight query is valid
+        run: tree-sitter query queries/highlights.scm examples/contact-centre.flux > /dev/null
+
+  rust:
+    name: rust binding
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build & test the Rust binding
+        run: cargo test

@@ -1,5 +1,5 @@
 [package]
-name = "tree-sitter-flux"
+name = "flux-tree-sitter"
 description = "Flux-Lang grammar for tree-sitter"
 version = "0.1.0"
 authors = ["codewandler"]

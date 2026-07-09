@@ -1,5 +1,5 @@
 {
-  "name": "tree-sitter-flux",
+  "name": "flux-tree-sitter",
   "version": "0.1.0",
   "description": "Flux-Lang grammar for tree-sitter",
   "repository": "github:codewandler/flux-tree-sitter",
