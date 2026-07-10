@@ -21,6 +21,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   — which shelled out to the `tree-sitter` CLI and coloured by
   `queries/highlights.scm` — is retired and removed.
 
+### Fixed
+
+- The grammar now covers current Flux-Lang plus the documented tolerant editor superset, including
+  optional field access, typed binds, context appends, multiline values, durable/error/concurrency
+  forms, `peek`/`thing`/`parse`, journey flow markers, and legacy header spellings.
+- `fmt` accepts ordinary and triple-string templates; interpolation supports `{name}` and
+  `{{name}}` while non-placeholder braces remain string content.
+- Highlight captures now follow one semantic contract: every callable is `@function`, all types are
+  `@type`, and `$symbols` remain consistently `@variable`. Known-operation checks stay with the
+  LSP/compiler rather than a hard-coded syntax list.
+- Locals queries cover the newly supported binding forms, all query files are checked in CI, and
+  capture-level Rust tests prevent the `now()`/`fmt()` colour split from recurring.
+
 ## [0.1.0] - 2026-07-09
 
 Initial release.

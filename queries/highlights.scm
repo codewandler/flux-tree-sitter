@@ -1,5 +1,6 @@
-; Flux-Lang highlight queries
-; Capture names follow the Helix / nvim-treesitter conventions.
+; Flux-Lang highlight queries.
+; Capture semantic roles, not host-catalog knowledge: every callable is a function, regardless of
+; whether it is built in, supplied by a plugin, or declared as a composite op.
 
 ; ------------------------------------------------------------------ comments
 (comment) @comment
@@ -9,11 +10,6 @@
   "flow"
   "op"
   "type"
-] @keyword
-
-(declaration_keyword) @keyword
-
-[
   "when"
   "else"
   "unless"
@@ -24,25 +20,24 @@
   "fallback"
   "branch"
   "parallel"
+  "race"
   "seq"
-] @keyword.control.conditional
-
-[
+  "block"
+  "pipe"
   "each"
   "in"
   "repeat"
   "until"
   "loop"
+  "watch"
   "for"
   "every"
   "flat"
-] @keyword.control.repeat
-
-"return" @keyword.control.return
-
-[
+  "return"
   "do"
   "assert"
+  "verify"
+  "contains"
   "confirm"
   "goal"
   "with_tools"
@@ -57,13 +52,33 @@
   "exclude"
   "risk"
   "secret"
+  "memo"
+  "once"
+  "checkpoint"
+  "await"
+  "throttle"
+  "per"
+  "debounce"
+  "try"
+  "catch"
+  "scope"
+  "finally"
+  "saga"
+  "step"
+  "undo"
+  "peek"
+  "thing"
 ] @keyword
+
+(declaration_keyword) @keyword
 
 ; ------------------------------------------------------------------ annotations
 (effect_annotation "@effect" @attribute)
 (effect_annotation effect: (identifier) @attribute)
 "@json" @attribute
+(annotation) @attribute
 (json_escape (json_content) @string.special)
+(json_expression (json_content) @string.special)
 
 ; ------------------------------------------------------------------ declarations
 (flow_declaration name: (identifier) @function)
@@ -73,24 +88,29 @@
 (datasource_declaration name: (identifier) @namespace)
 (trigger_declaration name: (identifier) @namespace)
 (journey_declaration name: (identifier) @namespace)
-
-; ------------------------------------------------------------------ parameters & keys
-(parameter name: (identifier) @variable.parameter)
-(named_argument name: (identifier) @variable.parameter)
-(attribute key: (attribute_key) @property)
-(pair key: (identifier) @property)
+(type_declaration name: (type_identifier) @type)
 
 ; ------------------------------------------------------------------ calls
-(operation (identifier) @function.method)
-"fmt" @function.builtin
+(operation (identifier) @function)
+(fmt "fmt" @function)
+(parse "parse" @function)
 
 ; ------------------------------------------------------------------ variables
+(parameter name: (identifier) @variable.parameter)
 (variable) @variable
-(variable field: (property) @variable.other.member)
+(interpolation) @variable
 
 ; ------------------------------------------------------------------ types
-(builtin_type) @type.builtin
+(builtin_type) @type
 (type_identifier) @type
+(return_type type: (identifier) @type)
+(parameter type: (identifier) @type)
+(bind_statement type: (identifier) @type)
+(memo_statement type: (identifier) @type)
+(await_statement type: (identifier) @type)
+(record_field type: (identifier) @type)
+(generic_type (identifier) @type)
+(optional_type (identifier) @type)
 
 ; ------------------------------------------------------------------ enum labels
 (union_variant name: (identifier) @constant)
@@ -99,11 +119,21 @@
 (string) @string
 (triple_string) @string
 (escape_sequence) @constant.character.escape
-(interpolation) @punctuation.special
-(interpolation (interp_symbol) @variable)
 (number) @constant.numeric
 (boolean) @constant.builtin.boolean
 (null) @constant.builtin
+
+; ------------------------------------------------------------------ keys and labels
+(named_argument name: (identifier) @variable.other.member)
+(attribute key: (attribute_key) @variable.other.member)
+(pair key: (_) @variable.other.member)
+(record_field name: (identifier) @variable.other.member)
+
+; `thing <kind> <selector> ...`: the form marker and selector are keywords; the referenced kind is
+; type-like. `custom` is represented as an anonymous token, so capture the whole field either way.
+(thing kind: (_) @type)
+(thing kind: "custom" @type)
+(thing selector: (identifier) @keyword)
 
 ; ------------------------------------------------------------------ operators & punctuation
 [
@@ -140,3 +170,7 @@
   ":"
   "."
 ] @punctuation.delimiter
+
+"?" @punctuation.special
+
+(ERROR) @error

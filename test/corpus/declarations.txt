@@ -22,8 +22,7 @@ flow greet(name: String) -> String
       (fmt
         (string
           (string_content)
-          (interpolation
-            (interp_symbol)))))
+          (interpolation))))
     (return_statement
       (variable))))
 
