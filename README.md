@@ -27,25 +27,38 @@ ships the TextMate grammar and IntelliJ plugin.
 
 ## What it highlights
 
-The grammar recognises the full editor-facing surface, matching the token classes
-of the upstream TextMate/IntelliJ tooling — the *superset* (it also colours
-aspirational nodes like `type`/`pipe`/`race`/`try`/`await`, not only the stricter
-runtime-parsed subset):
+The grammar recognises the full editor-facing surface as a tolerant superset: current runtime
+syntax is parsed precisely, while documented legacy/aspirational authoring forms remain coloured
+instead of collapsing into `ERROR` nodes. Semantic validation still belongs to `flux-lsp` and the
+Flux compiler.
 
 - **Declarations** — `flow`, `op`, `agent`, `channel`, `datasource`, `trigger`,
   `journey`, `type` (records + `|` unions)
-- **Statements** — binds (`$x =` / `+=`), `do` calls, `when`/`else`/`unless`,
-  `each`/`repeat`/`until`/`loop`, `match`/`route`/`case`/`default`,
-  `fallback`/`branch`/`parallel`/`seq`, `retry`, `timeout`/`budget`, `ctx`,
-  `assert`, `confirm`, `return`, `with_tools`, `goal`
+- **Statements** — typed binds and context appends; `do`; conditions and loops; match/route;
+  fallback/parallel/race; seq/block/pipe; retry/timeout/budget; `ctx`; assertions and verification;
+  confirm/throttle/debounce; try/catch; memo/once/checkpoint/await; scope/finally; saga/step/undo;
+  `return`, `with_tools`, and `goal`
 - **Expressions** — dotted/kebab op calls (`babelforce-manager.acd.create_queue`),
-  `$var.field` access, named arguments (`schema: CallerSlots`), object/array
-  literals, `fmt(...)`
-- **Literals** — strings with `{interpolation}`, verbatim `"""triple"""` strings,
-  numbers, booleans, `null`
-- **Annotations** — `@effect(...)`, and `@json <compact-json>` (with the JSON
-  injected into the escape via `injections.scm`)
+  strict/optional `$var.field?` access, `peek`, `thing`, inline `@json`, named arguments,
+  multiline object/array/call layouts, `fmt(...)`, and `parse(...)`
+- **Literals** — ordinary and verbatim `"""triple"""` strings, `{name}`/`{{name}}`
+  interpolation, literal braces, underscored numbers, booleans, and `null`
+- **Annotations** — `@effect(...)`, generic thing annotations, and `@json <compact-json>` (with
+  JSON injected into the escape via `injections.scm`)
 - `secret "ENV"` references, comments
+
+### Highlight roles and themes
+
+Highlighting is semantic rather than catalog-driven. Every callable name — `now`, `fmt`, `parse`,
+`ai.extract`, a plugin op, or a module-local composite op — is captured as `@function`; whether an
+operation exists is an LSP/compiler concern. Runtime symbols such as `$result` are captured as the
+portable `@variable` scope, and parameters as `@variable.parameter`.
+
+The active editor theme maps those scopes to colours. For example, Helix's Monokai Pro Spectrum
+deliberately renders `@variable` as white; the grammar does not misclassify symbols to force a hue.
+Use Helix's `:tree-sitter-highlight-name` command to inspect the scope under the cursor. The README
+image shows the canonical Flux renderer's target palette; capture-level Rust tests verify that the
+tree-sitter query follows the same role contract.
 
 ## Design — line-oriented, not indentation-tracked
 
@@ -139,11 +152,10 @@ workflow and invariants.
 
 ## Status
 
-Verified in CI: `tree-sitter generate` is conflict-free and `src/` is in sync;
-the corpus tests pass; the bundled examples (`examples/demo.flux` from
-flux-editors, and `examples/contact-centre.flux`) parse with **zero**
-ERROR/MISSING nodes; the `highlights.scm` query compiles and captures against
-them.
+Verified in CI: `tree-sitter generate` is conflict-free and `src/` is in sync; the current-surface
+and baseline corpus tests pass; every bundled example parses with **zero** ERROR/MISSING nodes; all
+three query files compile against the examples; and Rust tests assert the exact highlight captures
+for generic callables, symbols, parameters, keys, types, interpolation, and recovery.
 
 ## License
 

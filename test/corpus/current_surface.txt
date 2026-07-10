@@ -1,0 +1,395 @@
+==================
+current value forms
+==================
+
+flow values(input: String) -> answer
+  $prior: String = peek $input
+  $field = $prior.value?
+  $message = fmt("""single {prior}
+double {{prior}}
+shape {text: string}""")
+  $parsed = parse($message, as: "string")
+  $ticket = thing ticket id "FLUX-42"
+  $custom = thing custom "widget" key "w-1"
+  $annotated = @ticket(id: "FLUX-43")
+  $wire = @json {"kind":"lit","value":1}
+  @effect(read)
+  memo $cached: String = read("schema.sql")
+  $context += $prior, $field
+  repeat 2 -> $repeated
+    poll()
+  with_tools [read, grep] -> $scoped
+    inspect()
+  return $parsed
+
+---
+
+(source_file
+  (flow_declaration
+    (identifier)
+    (parameter_list
+      (parameter
+        (identifier)
+        (builtin_type)))
+    (return_type
+      (identifier))
+    (bind_statement
+      (variable)
+      (builtin_type)
+      (peek
+        (variable)))
+    (bind_statement
+      (variable)
+      (variable
+        (property)))
+    (bind_statement
+      (variable)
+      (fmt
+        (triple_string
+          (interpolation)
+          (interpolation)
+          (literal_brace)
+          (literal_brace))))
+    (bind_statement
+      (variable)
+      (parse
+        (arguments
+          (variable)
+          (named_argument
+            (identifier)
+            (string
+              (string_content))))))
+    (bind_statement
+      (variable)
+      (thing
+        (identifier)
+        (identifier)
+        (string
+          (string_content))))
+    (bind_statement
+      (variable)
+      (thing
+        (string
+          (string_content))
+        (identifier)
+        (string
+          (string_content))))
+    (bind_statement
+      (variable)
+      (thing_annotation
+        (annotation)
+        (arguments
+          (named_argument
+            (identifier)
+            (string
+              (string_content))))))
+    (bind_statement
+      (variable)
+      (json_expression
+        (json_content)))
+    (memo_statement
+      (effect_annotation
+        (identifier))
+      (variable)
+      (builtin_type)
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (string
+            (string_content)))))
+    (ctx_append_statement
+      (variable)
+      (arguments
+        (variable)
+        (variable)))
+    (repeat_clause
+      (number)
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (with_tools_clause
+      (array
+        (arguments
+          (identifier)
+          (identifier)))
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (return_statement
+      (variable))))
+
+==================
+durable concurrency and error handling
+==================
+
+flow controls
+  once "send" -> $receipt
+    send()
+  checkpoint "phase-1"
+  await $event: Event = "github.push"
+  try
+    risky()
+  catch $err
+    recover($err)
+  race 5000 -> $winner
+    branch $fast
+      fast()
+  pipe -> $out
+    read("input.txt")
+    parse($out, as: "string")
+  scope $handle = acquire()
+    use($handle)
+  finally
+    release($handle)
+  saga
+    step
+      charge()
+    undo
+      refund()
+  throttle "fetches" 5 per 60_000
+    fetch()
+  debounce "rebuild" 300
+    build()
+  verify check() contains "ok": "check failed"
+
+---
+
+(source_file
+  (flow_declaration
+    (identifier)
+    (once_clause
+      (string
+        (string_content))
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (checkpoint_statement
+      (string
+        (string_content)))
+    (await_statement
+      (variable)
+      (type_identifier)
+      (string
+        (string_content)))
+    (try_clause)
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (catch_clause
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (variable))))
+    (race_clause
+      (number)
+      (variable))
+    (branch_clause
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (pipe_clause
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (string
+            (string_content)))))
+    (expression_statement
+      (parse
+        (arguments
+          (variable)
+          (named_argument
+            (identifier)
+            (string
+              (string_content))))))
+    (scope_clause
+      (variable)
+      (call
+        (operation
+          (identifier))))
+    (expression_statement
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (variable))))
+    (finally_clause)
+    (expression_statement
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (variable))))
+    (saga_clause)
+    (step_clause)
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (undo_clause)
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (throttle_clause
+      (string
+        (string_content))
+      (number)
+      (number))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (debounce_clause
+      (string
+        (string_content))
+      (number))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (verify_statement
+      (call
+        (operation
+          (identifier)))
+      (string
+        (string_content))
+      (string
+        (string_content)))))
+
+==================
+multiline values
+==================
+
+flow multiline
+  $result = transform(
+    schema: Result,
+    payload: {
+      values: [
+        1,
+        -2,
+      ],
+    },
+  )
+  return $result
+
+---
+
+(source_file
+  (flow_declaration
+    (identifier)
+    (bind_statement
+      (variable)
+      (call
+        (operation
+          (identifier))
+        (arguments
+          (named_argument
+            (identifier)
+            (type_identifier))
+          (named_argument
+            (identifier)
+            (object
+              (pair
+                (identifier)
+                (array
+                  (arguments
+                    (number)
+                    (unary_expression
+                      (number))))))))))
+    (return_statement
+      (variable))))
+
+==================
+journey marker and legacy editor forms
+==================
+
+journey deliver
+  agent helper
+  flow
+    return true
+
+type Result
+  value: String
+
+flow legacy
+  watch for: 1000, every: 100
+    poll()
+  block -> $result
+    work()
+  confirm "Proceed?", risk: high
+  retry 3, backoff: exponential, delay: 500 -> $retried
+    flaky()
+  race timeout: 5000 -> $raced
+    branch $candidate
+      candidate()
+
+---
+
+(source_file
+  (journey_declaration
+    (declaration_keyword)
+    (identifier)
+    (attribute
+      (attribute_key)
+      (identifier))
+    (journey_flow_marker)
+    (return_statement
+      (boolean)))
+  (type_declaration
+    (type_identifier)
+    (record_field
+      (identifier)
+      (builtin_type)))
+  (flow_declaration
+    (identifier)
+    (watch_clause
+      (number)
+      (number))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (block_clause
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (confirm_clause
+      (string
+        (string_content))
+      (identifier))
+    (retry_clause
+      (number)
+      (identifier)
+      (number)
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))
+    (race_clause
+      (number)
+      (variable))
+    (branch_clause
+      (variable))
+    (expression_statement
+      (call
+        (operation
+          (identifier))))))

@@ -140,8 +140,7 @@ multi line"""
       (variable)
       (string
         (string_content)
-        (interpolation
-          (interp_symbol))
+        (interpolation)
         (escape_sequence)))
     (bind_statement
       (variable)
