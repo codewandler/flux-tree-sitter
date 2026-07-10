@@ -53,6 +53,9 @@ jobs:
             tree-sitter query -q "$q" examples/*.flux
           done
 
+      - name: Helix installer is idempotent and preserves config
+        run: bash test/install-helix.sh
+
   rust:
     name: rust binding
     runs-on: ubuntu-latest

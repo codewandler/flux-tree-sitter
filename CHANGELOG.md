@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The README example is now a syntax-highlighted image (`assets/example.svg`)
   generated from `examples/readme-example.flux` — since GitHub cannot highlight
   `.flux` natively.
+- `scripts/install-helix.sh` provides one idempotent Helix install/update path: immutable revision
+  pinning, Flux-only fetch/build, matched query installation, config preservation/rollback, and
+  health verification. Its isolated regression test runs in CI.
 
 ### Changed
 
@@ -20,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   own CST-based One-Dark renderer). The `scripts/render-example.mjs` Node script
   — which shelled out to the `tree-sitter` CLI and coloured by
   `queries/highlights.scm` — is retired and removed.
+- Helix onboarding now points humans and agents at the same installer. The manual fallback explains
+  immutable revisions, matched parser/query updates, Flux-only grammar builds, capture inspection,
+  and the distinction between health checks and theme colours.
 
 ### Fixed
 

@@ -86,7 +86,28 @@ scanner.
 
 ### Helix
 
-Add to `~/.config/helix/languages.toml`:
+The recommended installer registers an immutable grammar revision, fetches/builds only Flux,
+installs the matching queries, preserves existing Flux/LSP configuration, and runs
+`hx --health flux`:
+
+```sh
+curl --proto '=https' --tlsv1.2 -LsSf \
+  https://raw.githubusercontent.com/codewandler/flux-tree-sitter/main/scripts/install-helix.sh | bash
+```
+
+Run the same command again to update. Restart Helix after an install or update. For `flux-lsp`
+diagnostics, completion, hover, and formatting, follow the canonical
+[Flux editor setup guide](https://codewandler.github.io/flux/docs/language/editors).
+
+<details>
+<summary>Manual installation and troubleshooting</summary>
+
+Helix treats `rev` as a checkout target. Resolve the moving branch once and put the resulting
+immutable commit—not `main`—in `~/.config/helix/languages.toml`:
+
+```sh
+git ls-remote https://github.com/codewandler/flux-tree-sitter refs/heads/main
+```
 
 ```toml
 [[language]]
@@ -95,22 +116,30 @@ scope = "source.flux"
 file-types = ["flux"]
 comment-token = "#"
 indent = { tab-width = 2, unit = "  " }
-# optional: wire the flux LSP for diagnostics/hover/completion
-# language-servers = ["flux-lsp"]
 
 [[grammar]]
 name = "flux"
-source = { git = "https://github.com/codewandler/flux-tree-sitter", rev = "main" }
+source = { git = "https://github.com/codewandler/flux-tree-sitter", rev = "<40-character commit>" }
 ```
 
-Then fetch, build, and install the queries:
+Temporarily put `use-grammars = { only = ["flux"] }` before all tables while running the build;
+otherwise Helix fetches its entire built-in grammar catalog. Preserve any selection you already
+had once the build is done. Then:
 
 ```sh
 hx --grammar fetch
 hx --grammar build
 mkdir -p ~/.config/helix/runtime/queries/flux
-cp queries/*.scm ~/.config/helix/runtime/queries/flux/
+cp ~/.config/helix/runtime/grammars/sources/flux/queries/*.scm \
+  ~/.config/helix/runtime/queries/flux/
+hx --health flux
 ```
+
+The parser and queries are a matched set; update and copy both together. `--health` checks their
+presence, not their revision or colours. Use `:tree-sitter-highlight-name` on a token to inspect its
+semantic capture; the active Helix theme chooses the visible colour.
+
+</details>
 
 > Helix highlights via tree-sitter only — it does **not** render LSP semantic
 > tokens (as of 25.07). Colour comes entirely from this grammar +
